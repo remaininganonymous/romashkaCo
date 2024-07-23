@@ -4,14 +4,14 @@ import jakarta.persistence.*;
 import lombok.*;
 import java.math.BigDecimal;
 
-@Entity
+/*@Entity*/
 @Getter
 @Setter
 @NoArgsConstructor
 public class Product {
-    @Id
+    /*@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Integer id;*/
 
     //@Column(nullable = false, length = 255)
     private String name;

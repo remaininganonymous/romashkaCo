@@ -19,13 +19,13 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public Optional<Product> getProductById(Integer id) {
         Optional<Product> optionalProduct = Optional.empty();
-        if (!(id < 0) && !(id > products.size() - 1)) {
-            optionalProduct = Optional.of(products.get(id));
+        if (!(id < 1) && !(id > products.size())) {
+            optionalProduct = Optional.of(products.get(id - 1));
         } else {
-            if (id < 0) {
-                throw new IllegalArgumentException("Введен некорректный ID (не может быть меньше нуля)");
+            if (id < 1) {
+                throw new IllegalArgumentException("Введен некорректный ID (не может быть меньше единицы)");
             }
-            if (id > products.size() - 1) {
+            if (id > products.size()) {
                 throw new IllegalStateException("Такого ID нет в списке");
             }
         }
@@ -39,25 +39,28 @@ public class ProductServiceImpl implements ProductService {
                 userInput.getProductPrice(),
                 userInput.isProductInStock());
         products.add(product);
-        products.get(products.size() - 1).setId(products.size()); //не работает
         return product;
     }
 
     @Override
-    public Product updateProduct(UpdateProductDto userInput) { //
+    public Product updateProduct(UpdateProductDto userInput) {
         Product product = new Product();
-        if (!(userInput.getId() < 0) && !(userInput.getId() > products.size() - 1)) {
+        if (!(userInput.getId() < 1) && !(userInput.getId() > products.size())) {
             product = products.get(userInput.getId() - 1);
-            if (userInput.getProductName() != null) product.setName(userInput.getProductName());
-            if (userInput.getProductDescription() != null) product.setDescription(userInput.getProductDescription());
-            if (userInput.getProductPrice() != null) product.setPrice(userInput.getProductPrice());
-            if (userInput.getProductInStock() != null) product.setInStock(userInput.getProductInStock());
-            products.set(userInput.getId(), product);
+            if (userInput.getProductName() != null)
+                product.setName(userInput.getProductName());
+            if (userInput.getProductDescription() != null)
+                product.setDescription(userInput.getProductDescription());
+            if (userInput.getProductPrice() != null)
+                product.setPrice(userInput.getProductPrice());
+            if (userInput.getProductInStock() != null)
+                product.setInStock(userInput.getProductInStock());
+            products.set(userInput.getId() - 1, product);
         } else {
-            if (userInput.getId() < 0) {
-                throw new IllegalArgumentException("Введен некорректный ID (не может быть меньше нуля)");
+            if (userInput.getId() < 1) {
+                throw new IllegalArgumentException("Введен некорректный ID (не может быть меньше единицы)");
             }
-            if (userInput.getId() > products.size() - 1) {
+            if (userInput.getId() > products.size()) {
                 throw new IllegalStateException("Такого ID нет в списке");
             }
         }
@@ -66,13 +69,13 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public void deleteProduct(Integer id) {
-        if (!(id < 0) && !(id > products.size() - 1)) {
-            products.remove(id);
+        if (!(id < 1) && !(id > products.size())) {
+            products.remove(id - 1);
         } else {
-            if (id < 0) {
+            if (id < 1) {
                 throw new IllegalArgumentException("Введен некорректный ID (не может быть меньше нуля)");
             }
-            if (id > products.size() - 1) {
+            if (id > products.size()) {
                 throw new IllegalStateException("Такого ID нет в списке");
             }
         }

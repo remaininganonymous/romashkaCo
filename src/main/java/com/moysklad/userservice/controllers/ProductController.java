@@ -3,6 +3,7 @@ package com.moysklad.userservice.controllers;
 import com.moysklad.userservice.DTO.CreateProductDto;
 import com.moysklad.userservice.DTO.UpdateProductDto;
 import com.moysklad.userservice.entities.Product;
+import com.moysklad.userservice.exceptions.InvalidIDException;
 import com.moysklad.userservice.services.ProductServiceImpl;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,8 +34,8 @@ public class ProductController {
     @GetMapping("/{id}")
     public ResponseEntity<?> getProduct(@PathVariable Integer id) {
         try {
-            Product product = productService.getProductById(id + 1)
-                    .orElseThrow(() -> new RuntimeException()); // TODO: сделать свое исключение
+            Product product = productService.getProductById(id)
+                    .orElseThrow(() -> new InvalidIDException()); // TODO: сделать свое исключение
             return ResponseEntity.ok(product); // дополнить
         } catch (RuntimeException e) { // TODO
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
@@ -47,7 +48,7 @@ public class ProductController {
         try {
             Product product = productService.createProduct(userInput);
             URI location = ServletUriComponentsBuilder
-                    .fromPath("/" + product.getId())
+                    .fromPath("/" + productService.getAllProducts().indexOf(product))
                     .build()
                     .toUri();
             return ResponseEntity.created(location).body(product);
@@ -58,7 +59,7 @@ public class ProductController {
     }
 
     @PatchMapping("/update")
-    public ResponseEntity<?> updateProduct(@RequestBody @Valid UpdateProductDto userInput) { //
+    public ResponseEntity<?> updateProduct(@RequestBody @Valid UpdateProductDto userInput) {
         try {
             Product updatedProduct = productService.updateProduct(userInput);
             return ResponseEntity.ok(updatedProduct);
@@ -70,7 +71,7 @@ public class ProductController {
     @DeleteMapping("delete/{id}")
     public ResponseEntity<?> deleteProduct(@PathVariable Integer id) {
         try {
-            productService.deleteProduct(id + 1);
+            productService.deleteProduct(id);
             return ResponseEntity.ok("Продукт успешно удален");
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
